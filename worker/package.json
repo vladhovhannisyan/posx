@@ -1,0 +1,28 @@
+{
+  "name": "hikeup-worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "runFileSyncWorker": "node job/file-sync-worker.js",
+    "runEntitySyncWorker": "node job/entity-sync-worker.js",
+    "runSalePushWorker": "node job/sale-push-worker.js"
+  },
+  "author": "Suraj Mandal",
+  "license": "ISC",
+  "dependencies": {
+    "@sentry/node": "^5.15.5",
+    "async": "^3.2.0",
+    "aws-sdk": "^2.720.0",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "csv-parser": "2.3.3",
+    "csv-reader": "1.0.7",
+    "express": "4.17.1",
+    "moment": "^2.24.0",
+    "mongoose": "5.7.12",
+    "node-fetch": "2.6.0",
+    "winston-logstash-transporter": "1.0.1"
+  }
+}

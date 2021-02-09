@@ -1,0 +1,6 @@
+worker/.env
+worker/node_modules
+api/.env
+api/node_modules
+internal-api/.env
+internal-api/node_modules

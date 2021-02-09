@@ -1,0 +1,96 @@
+version: '3.1'
+networks:
+  default:
+    external:
+      name: posxdata  
+services:
+  # hikeup-api:
+  #   image: node:10.16
+  #   working_dir: /api
+  #   command: npm start
+  #   env_file:
+  #     - ./api/.env
+  #   volumes:
+  #     - ./api:/api
+  #     - ./models:/api/models
+  #     - ./utils:/api/utils
+  #   command: ["npm", "start"]
+  #   ports:
+  #     - "8015:80"
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - api.hikeup.posxdata.localdomain
+  
+  hikeup-webhook-api:
+    image: node:10.16
+    working_dir: /webhook
+    command: npm start
+    env_file:
+      - ./webhook/.env
+    volumes:
+      - ./webhook:/webhook
+      - ./models:/webhook/models
+      - ./utils:/webhook/utils
+    command: ["npm", "start"]
+    ports:
+      - "8019:80"
+    networks:
+      default:
+        aliases:
+          - webhook.hikeup.cloudkitchens.localdomain
+        
+  file-sync-worker:
+    restart: always
+    image: node:10.16
+    env_file:
+      - ./worker/.env
+    environment:
+      APPLICATION: 'file-sync-worker'
+    volumes:
+      - ./worker:/apps
+      - ./models:/apps/models
+      - ./utils:/apps/utils
+      - ./files:/apps/files
+      - ./config:/apps/config
+    working_dir: /apps
+    command: ["npm", "run", "runFileSyncWorker"]
+    networks:
+      - default
+
+  entity-sync-worker:
+    restart: always
+    image: node:10.16
+    env_file:
+      - ./worker/.env
+    environment:
+      APPLICATION: 'entity-sync-worker'
+    volumes:
+      - ./worker:/apps
+      - ./models:/apps/models
+      - ./utils:/apps/utils
+      - ./files:/apps/files
+      - ./config:/apps/config
+    working_dir: /apps
+    command: ["npm", "run", "runEntitySyncWorker"]
+    networks:
+      - default
+
+  sale-push-worker:
+    restart: always
+    image: node:10.16
+    env_file:
+      - ./worker/.env
+    environment:
+      APPLICATION: 'sale-push-worker'
+    volumes:
+      - ./worker:/apps
+      - ./models:/apps/models
+      - ./utils:/apps/utils
+      - ./files:/apps/files
+      - ./config:/apps/config
+    working_dir: /apps
+    command: ["npm", "run", "runSalePushWorker"]
+    networks:
+      - default
+  

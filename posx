@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+
+set -e
+
+function start() {
+    docker-compose up -d
+}
+
+function stop() {
+    docker-compose down
+}
+
+function logs() {
+    docker-compose logs -f $@
+}
+
+function stopWorkers() {
+    docker-compose stop
+}
+
+function migrate() {
+    # TODO implement if needed
+    echo "The hikeup service has no migrations. will add later"
+}
+
+function build() {
+    stop
+    docker-compose run hikeup-webhook-api npm install
+    docker-compose run file-sync-worker npm install
+    start
+}
+
+function shell() {
+    docker-compose exec hikeup-webhook-api /bin/bash
+}
+
+function restart(){
+    docker-compose restart
+}
+
+function processCommand() {
+    case "$1" in
+    help)
+        showHelp ${@:2}
+        ;;
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    stop-workers)
+        stopWorkers
+        ;;
+    logs)
+        logs ${@:2}
+        ;;
+    migrate)
+        migrate
+        ;;
+    build)
+        build
+        ;;
+    shell)
+        shell
+        ;;
+    restart)
+        restart
+        ;;    
+    builder-shell)
+        builderShell
+        ;;
+    *)
+        showUsage
+        ;;
+    esac
+}
+
+function showHelp() {
+    if [ $# == 0 ]; then
+        echo "Valid commands:
+    help
+    start
+    stop
+    stop-workers
+    logs [<containerName>]
+    migrate
+    build
+    shell
+    restart
+"
+    else
+        case "$1" in
+        help)
+            echo "Shows the help"
+            ;;
+        start)
+            echo "Starts the service"
+            ;;
+        stop)
+            echo "Stops the service"
+            ;;
+        stop-workers)
+            echo "Stops all workers in the service"
+            ;;
+        logs)
+            echo "Shows logs, optionally filtered to the specified container"
+            ;;
+        migrate)
+            echo "Runs database migrations"
+            ;;
+        build)
+            echo "Builds the service"
+            ;;
+        shell)
+            echo "Gets a shell in the nginx container"
+            ;;
+        restart)
+            echo "Restarts all the services"
+            ;;
+        *)
+            echo "Invalid command: $1"
+            ;;
+        esac
+    fi
+}
+
+function showUsage() {
+    echo "Usage: $0 <command>"
+    echo ""
+    showHelp $@
+}
+
+processCommand $@
